@@ -1,0 +1,165 @@
+{
+  "name":          "jira",
+  "version":       "0.1.0",
+  "description":   "Jira Cloud connector — get / create / update / delete / search issues, add comments, transition status. Pick the action with the `operation` input (mirrors n8n's Jira node). Auth via a workspace `generic` config holding host, email, apiToken.",
+  "primaryOutput": "result",
+
+  "configRefs": [
+    {
+      "name":        "jira",
+      "type":        "generic",
+      "required":    true,
+      "description": "Generic config holding host (e.g. https://acme.atlassian.net), email, apiToken."
+    }
+  ],
+
+  "inputSchema": {
+    "type": "object",
+    "required": ["operation"],
+    "properties": {
+      "operation": {
+        "type": "string",
+        "description": "Which Jira API call to run.",
+        "enum": [
+          "issue.get",
+          "issue.create",
+          "issue.update",
+          "issue.delete",
+          "issue.search",
+          "issue.comment.add",
+          "issue.transition",
+          "issue.transitions.list"
+        ]
+      },
+
+      "config": {
+        "type": "string",
+        "description": "Workspace config name to read credentials from. Default: 'jira'."
+      },
+
+      "issueKey": {
+        "type": "string",
+        "description": "Issue key (e.g. ACME-123). Required for: get / update / delete / comment.add / transition / transitions.list."
+      },
+
+      "projectKey": {
+        "type": "string",
+        "description": "Project key (e.g. ACME). Required for: create."
+      },
+      "summary": {
+        "type": "string",
+        "description": "Issue title. Used by create (required) and update."
+      },
+      "issueType": {
+        "type": "string",
+        "description": "Issue type name, e.g. 'Task', 'Bug', 'Story'. Default: 'Task'. Used by create."
+      },
+      "description": {
+        "type": "string",
+        "description": "Plain text gets wrapped into Atlassian Document Format. Used by create / update."
+      },
+      "assignee": {
+        "type": "string",
+        "description": "Assignee accountId (NOT email). Pass empty string in update to unassign."
+      },
+      "reporter": {
+        "type": "string",
+        "description": "Reporter accountId."
+      },
+      "priority": {
+        "type": "string",
+        "description": "Priority name, e.g. 'High'."
+      },
+      "labels": {
+        "type": "array",
+        "items": { "type": "string" }
+      },
+      "components": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Component names."
+      },
+      "dueDate": {
+        "type": "string",
+        "description": "YYYY-MM-DD."
+      },
+      "customFields": {
+        "type": "object",
+        "description": "Map of customfield_XXXXX → value."
+      },
+
+      "jql": {
+        "type": "string",
+        "description": "JQL query. Required for: search."
+      },
+      "maxResults": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 100,
+        "default": 50,
+        "description": "Used by search."
+      },
+      "startAt": {
+        "type": "integer",
+        "minimum": 0,
+        "default": 0,
+        "description": "Pagination offset for search."
+      },
+      "fields": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Restrict response fields. Used by get / search."
+      },
+      "expand": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Jira `expand` query for get / search."
+      },
+
+      "comment": {
+        "type": "string",
+        "description": "Comment body. Plain text gets wrapped into ADF. Used by comment.add and (optionally) transition."
+      },
+      "visibility": {
+        "type": "object",
+        "description": "Optional visibility restriction for the comment.",
+        "properties": {
+          "type":  { "type": "string", "enum": ["group", "role"] },
+          "value": { "type": "string" }
+        }
+      },
+
+      "transitionId": {
+        "type": "string",
+        "description": "Transition ID. Used by transition; takes precedence over transitionName."
+      },
+      "transitionName": {
+        "type": "string",
+        "description": "Human-readable transition name, e.g. 'Done'. The plugin resolves it from the issue's available transitions."
+      },
+      "resolution": {
+        "type": "string",
+        "description": "Optional resolution name to set when transitioning, e.g. 'Done'."
+      },
+
+      "timeoutMs": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 60000,
+        "default": 15000
+      }
+    }
+  },
+
+  "outputSchema": {
+    "type": "object",
+    "required": ["ok", "operation"],
+    "properties": {
+      "ok":        { "type": "boolean" },
+      "operation": { "type": "string", "description": "Echo of the input operation that ran." },
+      "status":    { "type": "integer", "description": "HTTP status from the underlying Jira REST call." },
+      "result":    { "description": "Operation-specific payload. Issue for get/create. Array of issues + paging for search. Comment for comment.add. Transition list for transitions.list. For update/delete/transition: a small ack object with issueKey + url." },
+      "url":       { "type": "string", "description": "Deep-link to the affected issue (when applicable)." }
+    }
+  }
+}
