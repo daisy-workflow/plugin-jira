@@ -1,7 +1,7 @@
 # Jira plugin for Daisy-workflow
 
 One Daisy node that talks to Jira Cloud. The action is selected per-node via
-the **operation** dropdown — same UX as n8n's Jira node.
+the **operation** dropdown  .
 
 ## Operations
 
