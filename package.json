@@ -1,6 +1,6 @@
 {
   "name":        "@daisy-workflow/plugin-jira",
-  "version":     "0.0.1",
+  "version":     "0.0.2",
   "description": "Daisy workflow plugin — Jira Cloud connector",
   "type":        "module",
   "main":        "index.js",
