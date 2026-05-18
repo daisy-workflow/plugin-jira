@@ -24,6 +24,14 @@
 #   npm name   = read from package.json (e.g. @daisy-workflow/plugin-jira)
 #   docker img = vivek13186/daisy-<plugin-name>  (e.g. vivek13186/daisy-plugin-jira)
 #   version    = read from package.json; tag must match.
+#
+# Action versions:
+#   actions/checkout@v5 and actions/setup-node@v5 run on Node 24 — required
+#   to avoid the deprecation warning announced 2025-09-19, where GitHub
+#   begins migrating JavaScript-based actions off Node 20 on 2026-06-02.
+#   The docker/* actions (login@v3, setup-buildx@v3, setup-qemu@v3,
+#   build-push@v6) are already on majors that ship Node 24-compatible
+#   minor releases, so no version bump needed there.
 # ============================================================================
 
 name: release
@@ -53,7 +61,7 @@ jobs:
       image:   ${{ steps.read.outputs.image }}
       npm:     ${{ steps.read.outputs.npm }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Read package.json
         id: read
@@ -90,11 +98,11 @@ jobs:
     needs: verify
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5   # v5 runs on Node 24
         with:
-          node-version: "22"
+          node-version: "22"           # Node version used to BUILD/PUBLISH the package (independent of the runtime above)
           registry-url: "https://registry.npmjs.org"
 
       - name: Install dependencies
@@ -116,7 +124,7 @@ jobs:
     needs: verify
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up QEMU
         # Lets us cross-compile arm64 on an amd64 GitHub runner.
@@ -164,7 +172,7 @@ jobs:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0   # full history so generate-notes can diff to prev tag
 
