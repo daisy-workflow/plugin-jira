@@ -2,6 +2,7 @@
   "name":          "jira",
   "version":       "0.1.0",
   "description":   "Jira Cloud connector — get / create / update / delete / search issues, add comments, transition status. Pick the action with the `operation` input (mirrors n8n's Jira node). Auth via a workspace `generic` config holding host, email, apiToken.",
+  "ui":            { "category": "productivity", "icon": "jira" },
   "primaryOutput": "result",
 
   "configRefs": [

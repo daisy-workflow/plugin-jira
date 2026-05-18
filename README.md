@@ -3,6 +3,10 @@
 One Daisy node that talks to Jira Cloud. The action is selected per-node via
 the **operation** dropdown  .
 
+
+[![Docker Hub](https://img.shields.io/badge/Docker%20Hub-Image-blue?logo=docker)](https://hub.docker.com/repository/docker/vivek13186/daisy-plugin-jira)
+
+
 ## Operations
 
 | operation                  | What it does                                              |
